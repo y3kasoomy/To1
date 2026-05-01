@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تقرير برنامج توجيهي مطور - مدرسة مزدلفة</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --print-width: 210mm;
+            --print-height: 297mm;
+            --moe-green: #007A7C; 
+            --moe-green-light: #00a1a3;
+            --bg-gray-custom: #f4f6f7; 
+        }
+        
+        @font-face {
+            font-family: 'Sakkal Majalla';
+            src: local('Sakkal Majalla'), local('Majalla');
+            font-variant-numeric: tabular-nums;
+        }
+
+        body {
+            font-family: 'Sakkal Majalla', 'Noto Sans Arabic', sans-serif;
+            background-color: #f1f5f9;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            font-feature-settings: "tnum", "onum";
+        }
+
+        .arabic-numbers {
+            font-family: 'Sakkal Majalla', serif;
+            direction: rtl;
+            unicode-bidi: plaintext;
+        }
+
+        * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            color-adjust: exact !important;
+        }
+
+        .dashboard {
+            background: #ffffff;
+            border-bottom: 2px solid #e2e8f0;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .report-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .print-area {
+            background: white;
+            width: var(--print-width);
+            min-width: var(--print-width);
+            height: var(--print-height);
+            margin: 0 auto;
+            padding: 8mm 10mm;
+            box-sizing: border-box;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+
+        @media print {
+            @page { size: A4; margin: 0; }
+            body { background: white; }
+            .no-print, .dashboard { display: none !important; }
+            .report-wrapper { padding: 0; }
+            .print-area { 
+                margin: 0; 
+                width: 100%; 
+                min-width: 100%;
+                height: 100vh; 
+                border: none; 
+            }
+        }
+
+        .vertical-line { width: 3px; background-color: var(--moe-green); height: 40px; }
+        .section-title { position: relative; display: inline-block; padding-bottom: 1px; border-bottom: 2px solid var(--moe-green); margin-bottom: 8px; font-size: 16px; font-weight: bold; color: var(--moe-green); }
+        
+        .custom-box {
+            background-color: var(--bg-gray-custom);
+            border: 1.5px solid var(--moe-green);
+            border-radius: 6px;
+            padding: 8px;
+        }
+
+        .photo-placeholder {
+            border: 1.5px solid var(--moe-green);
+            background-color: var(--bg-gray-custom);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            width: 100%;
+            aspect-ratio: 16/9; 
+            font-size: 11px;
+            color: #64748b;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            overflow: hidden;
+        }
+        
+        .report-content-font { font-size: 17px; font-weight: bold; }
+        .header-text { font-size: 17px; font-weight: bold; line-height: 1.3; color: var(--moe-green); }
+        .signature-label { font-size: 17px; font-weight: bold; text-decoration: underline; text-underline-offset: 6px; color: var(--moe-green); }
+        .signature-name { font-size: 17px; font-weight: bold; margin-top: 5px; line-height: 1.4; min-height: 1.4em; }
+        .highlight-black { color: #000000; font-weight: bold; font-size: 20px; font-family: 'Sakkal Majalla', serif; } 
+
+        .date-input-container {
+            position: relative;
+        }
+        .date-picker-trigger {
+            cursor: pointer;
+            background-color: #fff;
+            border: 1px solid var(--moe-green);
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            width: 100%;
+            text-align: center;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: background-color 0.2s;
+        }
+        .date-picker-trigger:hover {
+            background-color: #f0fdfa;
+        }
+        .calendar-icon {
+            color: var(--moe-green);
+        }
+        #actual_date_picker {
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div class="dashboard no-print max-w-6xl mx-auto rounded-lg mt-0 md:mt-4 border border-teal-100">
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 border-b pb-2 gap-3">
+            <h3 class="font-bold text-[#007A7C] text-lg">لوحة تحكم التقرير - مدرسة مزدلفة الابتدائية</h3>
+            <button onclick="window.print()" class="w-full md:w-auto bg-[#007A7C] hover:bg-[#005a60] text-white px-8 py-2 rounded-lg font-bold shadow-lg transition-all">طباعة التقرير (A4)</button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+             <div class="col-span-1 space-y-2 p-3 bg-teal-50 rounded border">
+                <p class="font-bold border-b mb-1 text-teal-700 text-sm">تحميل الصور (ملء كامل):</p>
+                <div class="grid grid-cols-2 md:grid-cols-1 gap-2">
+                    <input type="file" accept="image/*" onchange="handleImage(event, 'viewImg1')" class="text-[10px] w-full border bg-white p-1 rounded">
+                    <input type="file" accept="image/*" onchange="handleImage(event, 'viewImg2')" class="text-[10px] w-full border bg-white p-1 rounded">
+                    <input type="file" accept="image/*" onchange="handleImage(event, 'viewImg3')" class="text-[10px] w-full border bg-white p-1 rounded">
+                    <input type="file" accept="image/*" onchange="handleImage(event, 'viewImg4')" class="text-[10px] w-full border bg-white p-1 rounded">
+                </div>
+            </div>
+
+            <div class="col-span-1 md:col-span-2 space-y-3 p-3 bg-gray-50 rounded border">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div class="flex flex-col gap-1">
+                        <label class="text-[10px] font-bold text-teal-700">عنوان التقرير الأساسي:</label>
+                        <input type="text" id="in_prog_title" value="تنفيذ برنامج توجيهي" oninput="updateField('view_prog_main', this.value)" class="border p-2 rounded text-sm font-bold w-full">
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <label class="text-[10px] font-bold text-teal-700">اسم البرنامج المنفذ:</label>
+                        <input type="text" id="in_prog_card" value="" oninput="updateField('view_prog_card', this.value)" class="border p-2 rounded text-sm font-bold w-full" placeholder="اسم البرنامج">
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div class="flex flex-col gap-1">
+                        <label class="text-[10px] font-bold text-teal-700">الجهة المنفذة:</label>
+                        <input type="text" id="in_org" value="التوجيه الطلابي" oninput="updateField('view_org', this.value)" class="border p-2 rounded text-sm font-bold w-full">
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <label class="text-[10px] font-bold text-teal-700">تاريخ التنفيذ:</label>
+                        <div class="date-input-container">
+                            <div class="date-picker-trigger" id="date_display_label">
+                                <svg class="calendar-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                <span>اختر التاريخ</span>
+                            </div>
+                            <input type="date" id="actual_date_picker" onchange="handleDateSelection(this.value)">
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 gap-2">
+                    <div class="flex flex-col gap-1">
+                        <label class="text-[10px] font-bold text-teal-700">الموجهون الطلابيون:</label>
+                        <input type="text" id="in_counselors" value="" oninput="updateField('view_counselors', this.value)" class="border p-2 rounded text-xs font-bold" placeholder="أدخل أسماء الموجهين">
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <label class="text-[10px] font-bold text-teal-700">مدير المدرسة:</label>
+                        <input type="text" id="in_manager" value="حامد علي الثقفي" oninput="updateField('view_manager', this.value)" class="border p-2 rounded text-xs font-bold" placeholder="أدخل اسم مدير المدرسة">
+                    </div>
+                </div>
+                
+                <!-- إضافة مسمى توضيحي للأهداف -->
+                <div class="flex flex-col gap-1">
+                    <label class="text-[10px] font-bold text-teal-700">أهداف البرنامج:</label>
+                    <div class="grid grid-cols-2 gap-1">
+                        <input type="text" class="goal-input border p-1 rounded text-[11px]" oninput="updateGoals()" placeholder="الهدف 1">
+                        <input type="text" class="goal-input border p-1 rounded text-[11px]" oninput="updateGoals()" placeholder="الهدف 2">
+                        <input type="text" class="goal-input border p-1 rounded text-[11px]" oninput="updateGoals()" placeholder="الهدف 3">
+                        <input type="text" class="goal-input border p-1 rounded text-[11px]" oninput="updateGoals()" placeholder="الهدف 4">
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-span-1 p-3 bg-gray-50 rounded border flex flex-col gap-2">
+                <p class="font-bold border-b mb-1 text-sm text-gray-600">المستفيدون:</p>
+                <div class="grid grid-cols-2 gap-3">
+                    <div><label class="text-[10px] block mb-1">طلاب</label><input type="text" oninput="updateField('viewS', this.value)" class="w-full border p-1 rounded text-sm" placeholder="مثال: ١٥"></div>
+                    <div><label class="text-[10px] block mb-1">معلمون</label><input type="text" oninput="updateField('viewT', this.value)" class="w-full border p-1 rounded text-sm"></div>
+                    <div><label class="text-[10px] block mb-1">إداريون</label><input type="text" oninput="updateField('viewA', this.value)" class="w-full border p-1 rounded text-sm"></div>
+                    <div><label class="text-[10px] block mb-1">ضيوف</label><input type="text" oninput="updateField('viewG', this.value)" class="w-full border p-1 rounded text-sm"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="report-wrapper">
+        <div class="print-area">
+            <header class="mb-4">
+                <div class="flex items-center justify-center gap-5 border-b-2 border-[#007A7C] pb-3">
+                    <div class="w-16 flex-shrink-0">
+                        <img src="https://upload.wikimedia.org/wikipedia/ar/1/17/Saudi_Ministry_of_Education_Logo_2025.png" alt="Logo">
+                    </div>
+                    <div class="vertical-line"></div>
+                    <div class="text-right">
+                        <h2 class="header-text">الإدارة العامة للتعليم بمحافظة جدة</h2>
+                        <p class="header-text">مدرسة مزدلفة الابتدائية</p>
+                    </div>
+                </div>
+            </header>
+
+            <main class="flex flex-col gap-3">
+                <div class="text-center">
+                    <h2 class="text-xl font-black text-[#007A7C]">
+                        تقرير <span id="view_prog_main">تنفيذ برنامج توجيهي</span>
+                    </h2>
+                </div>
+
+                <section class="grid grid-cols-4 gap-3">
+                    <div class="custom-box text-center col-span-1">
+                        <p class="text-[10px] text-gray-500">اسم البرنامج</p>
+                        <p id="view_prog_card" class="report-content-font text-[#007A7C] min-h-[1.2em]"></p>
+                    </div>
+                    <div class="custom-box text-center">
+                        <p class="text-[10px] text-gray-500">اليوم</p>
+                        <p id="view_day" class="report-content-font">-</p>
+                    </div>
+                    <div class="custom-box text-center">
+                        <p class="text-[10px] text-gray-500">تاريخ التنفيذ</p>
+                        <p id="view_date" class="report-content-font arabic-numbers">-</p>
+                    </div>
+                    <div class="custom-box text-center">
+                        <p class="text-[10px] text-gray-500">مقر التنفيذ</p>
+                        <p class="report-content-font">الفصول / الإذاعة</p>
+                    </div>
+                </section>
+
+                <section>
+                    <div class="custom-box border-2 p-0 overflow-hidden"> 
+                        <div class="bg-[#007A7C] text-white text-center py-1 text-[12px] font-bold">
+                            المستفيدون من البرنامج
+                        </div>
+                        <div class="grid grid-cols-5 text-center items-center p-1">
+                            <div class="col-span-1 bg-white/40 py-2 rounded border border-[#007A7C]/20">
+                                <p class="text-[11px] text-[#007A7C] font-bold">الجهة المنفذة</p>
+                                <p id="view_org" class="text-[15px] font-black text-[#007A7C]">التوجيه الطلابي</p>
+                            </div>
+                            <div class="col-span-1 border-r border-[#007A7C]/20">
+                                <p class="text-[12px] text-[#007A7C] font-bold">طلاب</p>
+                                <p id="viewS" class="highlight-black">-</p>
+                            </div>
+                            <div class="col-span-1 border-r border-[#007A7C]/20">
+                                <p class="text-[12px] text-[#007A7C] font-bold">معلمون</p>
+                                <p id="viewT" class="highlight-black">-</p>
+                            </div>
+                            <div class="col-span-1 border-r border-[#007A7C]/20">
+                                <p class="text-[12px] text-[#007A7C] font-bold">إداريون</p>
+                                <p id="viewA" class="highlight-black">-</p>
+                            </div>
+                            <div class="col-span-1 border-r border-[#007A7C]/20">
+                                <p class="text-[12px] text-[#007A7C] font-bold">ضيوف</p>
+                                <p id="viewG" class="highlight-black">-</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3 class="section-title">الهدف</h3>
+                    <div id="view_goals_container" class="grid grid-cols-2 gap-2">
+                        <div class="custom-box text-[15px] font-bold">يرجى إدخال الأهداف من لوحة التحكم...</div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3 class="section-title">شواهد من تنفيذ البرنامج</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="photo-placeholder" id="viewImg1"><span>صورة (١)</span></div>
+                        <div class="photo-placeholder" id="viewImg2"><span>صورة (٢)</span></div>
+                        <div class="photo-placeholder" id="viewImg3"><span>صورة (٣)</span></div>
+                        <div class="photo-placeholder" id="viewImg4"><span>صورة (٤)</span></div>
+                    </div>
+                </section>
+
+                <section class="grid grid-cols-2 gap-8 pt-4 mt-auto">
+                    <div class="text-center">
+                        <p class="signature-label">الموجه الطلابي</p>
+                        <p id="view_counselors" class="signature-name"></p>
+                    </div>
+                    <div class="text-center">
+                        <p class="signature-label">مدير المدرسة</p>
+                        <p id="view_manager" class="signature-name">حامد علي الثقفي</p>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        function toArabicDigits(str) {
+            if (!str) return "";
+            const id = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
+            return str.toString().replace(/[0-9]/g, function(w) {
+                return id[+w];
+            });
+        }
+
+        function handleDateSelection(dateVal) {
+            if (!dateVal) return;
+
+            const dateObj = new Date(dateVal);
+            
+            const days = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+            const dayName = days[dateObj.getDay()];
+            document.getElementById('view_day').innerText = dayName;
+
+            const options = { year: 'numeric', month: 'numeric', day: 'numeric', calendar: 'islamic-umalqura' };
+            let hijriDateRaw = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura', options).format(dateObj);
+            
+            hijriDateRaw = hijriDateRaw.replace(/هـ/g, '').trim();
+            
+            let formattedHijri = hijriDateRaw.replace(/[/]/g, ' / ');
+            formattedHijri = toArabicDigits(formattedHijri).trim() + " هـ";
+
+            const resultLabel = dayName + " - " + formattedHijri;
+            document.getElementById('view_date').innerText = formattedHijri;
+            
+            const labelSpan = document.querySelector('#date_display_label span');
+            if (labelSpan) labelSpan.innerText = resultLabel;
+        }
+
+        function updateField(viewId, value) {
+            const el = document.getElementById(viewId);
+            if (el) {
+                el.innerText = toArabicDigits(value) || "";
+            }
+        }
+
+        function updateGoals() {
+            const goalInputs = document.querySelectorAll('.goal-input');
+            const container = document.getElementById('view_goals_container');
+            container.innerHTML = '';
+            let count = 0;
+            goalInputs.forEach((input) => {
+                if (input.value.trim() !== "") {
+                    count++;
+                    const div = document.createElement('div');
+                    div.className = "custom-box flex gap-2 items-center arabic-numbers";
+                    div.innerHTML = `<span class="text-[#007A7C] font-bold text-[16px]">${toArabicDigits(count)}.</span>
+                                    <p class="text-gray-900 text-[16px] font-bold">${toArabicDigits(input.value)}</p>`;
+                    container.appendChild(div);
+                }
+            });
+        }
+
+        function handleImage(event, viewId) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const container = document.getElementById(viewId);
+                container.style.backgroundImage = `url('${e.target.result}')`;
+                
+                container.style.backgroundSize = 'cover'; 
+                container.style.backgroundRepeat = 'no-repeat';
+                container.style.backgroundPosition = 'center';
+                
+                container.innerHTML = '';
+                container.style.border = '1.5px solid var(--moe-green)';
+            }
+            reader.readAsDataURL(file);
+        }
+
+        window.onload = function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('actual_date_picker').value = today;
+            handleDateSelection(today);
+            
+            updateField('view_manager', 'حامد علي الثقفي');
+        };
+    </script>
+</body>
+</html>
