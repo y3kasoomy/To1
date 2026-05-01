@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نظام التوجيه الطلابي المتكامل | مدرسة الأقصى</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Noto+Sans+Arabic:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --moe-green: #007A7C; 
+            --moe-green-light: #00a1a3;
+            --bg-gray-custom: #f4f6f7; 
+            --print-width: 210mm;
+            --print-height: 297mm;
+        }
+        
+        body {
+            font-family: 'Tajawal', 'Noto Sans Arabic', sans-serif;
+            background-color: #f1f5f9;
+        }
+
+        /* تنسيقات عامة للطباعة */
+        @media print {
+            .no-print { display: none !important; }
+            body { background-color: white !important; padding: 0 !important; margin: 0 !important; }
+            .print-area-container { display: block !important; }
+        }
+
+        /* --- تنسيقات البطاقة الصحية --- */
+        .health-card {
+            border: 2px solid #007a83;
+            background-color: white;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100mm;
+            width: 100%;
+            border-radius: 12px;
+            box-sizing: border-box;
+            position: relative;
+        }
+        .data-value {
+            border-bottom: 1px solid #cbd5e1;
+            min-height: 28px;
+            color: #1e3a8a;
+            font-weight: 800;
+            font-size: 17px;
+            padding: 0 5px;
+            display: inline-block;
+            width: 70%;
+        }
+        .recommendation-container {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin: 15px 0;
+        }
+        .recommendation-area {
+            border: 2px dashed #007a83;
+            border-radius: 8px;
+            padding: 10px;
+            min-height: 60px;
+            font-size: 15px;
+            font-weight: 700;
+            color: #1e293b;
+            background-color: #f0fdfa;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- تنسيقات نظام التقارير المطور --- */
+        .report-print-area {
+            background: white;
+            width: var(--print-width);
+            height: var(--print-height);
+            margin: 0 auto;
+            padding: 8mm 10mm;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        }
+        @media print {
+            .report-print-area { border: none; box-shadow: none; margin: 0; width: 100%; height: 100vh; }
+        }
+        .vertical-line { width: 3px; background-color: var(--moe-green); height: 40px; }
+        .section-title { position: relative; display: inline-block; padding-bottom: 1px; border-bottom: 2px solid var(--moe-green); margin-bottom: 8px; font-size: 16px; font-weight: bold; color: var(--moe-green); }
+        .custom-box { background-color: var(--bg-gray-custom); border: 1.5px solid var(--moe-green); border-radius: 6px; padding: 8px; }
+        .photo-placeholder {
+            border: 1.5px solid var(--moe-green);
+            background-color: var(--bg-gray-custom);
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 6px; width: 100%; aspect-ratio: 16/9; font-size: 11px; color: #64748b;
+            background-size: cover; background-position: center; overflow: hidden;
+        }
+        .arabic-numbers { direction: rtl; unicode-bidi: plaintext; }
+        .highlight-black { color: #000000; font-weight: bold; font-size: 20px; }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header class="bg-[#007a83] text-white py-4 shadow-lg no-print">
+        <div class="container mx-auto px-6 flex justify-between items-center">
+            <div class="flex items-center gap-4 cursor-pointer" onclick="showSection('main')">
+                <img src="https://noor.moe.gov.sa/Noor/images/home_login/logo_new.png" alt="Logo" class="h-10 brightness-0 invert">
+                <h1 class="text-lg font-black">منصة التوجيه الطلابي | الأقصى المبارك</h1>
+            </div>
+            <button onclick="showSection('main')" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg font-bold transition text-sm">القائمة الرئيسية</button>
+        </div>
+    </header>
+
+    <!-- Main Menu -->
+    <main class="container mx-auto px-6 py-12 no-print" id="mainMenu">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            <!-- كرت البطاقات الصحية -->
+            <div onclick="showSection('healthCards')" class="bg-white p-8 rounded-3xl shadow-xl border-t-8 border-emerald-500 cursor-pointer hover:scale-105 transition-all flex flex-col items-center text-center">
+                <div class="bg-emerald-50 p-6 rounded-full mb-4">
+                    <svg class="w-16 h-16 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                </div>
+                <h3 class="text-2xl font-black text-gray-800">نظام البطاقات الصحية</h3>
+                <p class="text-gray-500 mt-2">إصدار بطاقات الحالات الخاصة للمعلمين</p>
+            </div>
+
+            <!-- كرت تقارير الأنشطة المطور -->
+            <div onclick="showSection('activityReports')" class="bg-white p-8 rounded-3xl shadow-xl border-t-8 border-teal-600 cursor-pointer hover:scale-105 transition-all flex flex-col items-center text-center">
+                <div class="bg-teal-50 p-6 rounded-full mb-4">
+                    <svg class="w-16 h-16 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
+                </div>
+                <h3 class="text-2xl font-black text-gray-800">تقارير الأنشطة المطور</h3>
+                <p class="text-gray-500 mt-2">توثيق البرامج الإرشادية والفعاليات</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- SECTION: Health Cards -->
+    <section id="healthCardsSection" class="hidden p-6">
+        <div class="no-print mb-6 flex flex-col md:flex-row items-center justify-between bg-white p-4 rounded-xl shadow-md max-w-5xl mx-auto gap-4">
+            <h2 class="font-black text-emerald-700 text-xl">طباعة البطاقة الصحية</h2>
+            <div class="flex gap-4 items-center">
+                <label class="text-sm font-bold">عدد البطاقات:</label>
+                <select id="cardCountSelector" onchange="updateCardVisibility()" class="border p-2 rounded-lg text-sm font-bold bg-gray-50">
+                    <option value="1">بطاقة واحدة</option>
+                    <option value="2">بطاقتان</option>
+                    <option value="3">ثلاث بطاقات</option>
+                    <option value="4" selected>أربع بطاقات</option>
+                </select>
+                <button onclick="window.print()" class="bg-[#007a83] text-white px-8 py-2 rounded-lg font-bold shadow-md hover:bg-emerald-800 transition">طباعة</button>
+            </div>
+        </div>
+        <div id="cardsWrapper" class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-[210mm] mx-auto pb-20"></div>
+    </section>
+
+    <!-- SECTION: Activity Reports (المطور) -->
+    <section id="activityReportsSection" class="hidden">
+        <div class="dashboard no-print max-w-6xl mx-auto rounded-xl p-6 bg-white shadow-lg mb-8 border border-teal-100">
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-6 border-b pb-4 gap-3">
+                <h3 class="font-black text-[#007A7C] text-xl underline decoration-teal-200 underline-offset-8">لوحة تحكم تقارير الأنشطة</h3>
+                <button onclick="window.print()" class="bg-[#007A7C] hover:bg-[#005a60] text-white px-10 py-3 rounded-xl font-bold shadow-xl transition-all">طباعة التقرير (A4)</button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                 <!-- الصور -->
+                 <div class="lg:col-span-1 space-y-4 p-4 bg-teal-50 rounded-xl border border-teal-100">
+                    <p class="font-bold border-b mb-1 text-teal-700 text-sm">شواهد البرنامج (صور):</p>
+                    <div class="space-y-2">
+                        <input type="file" accept="image/*" onchange="handleImage(event, 'viewImg1')" class="text-[10px] w-full border bg-white p-1 rounded">
+                        <input type="file" accept="image/*" onchange="handleImage(event, 'viewImg2')" class="text-[10px] w-full border bg-white p-1 rounded">
+                        <input type="file" accept="image/*" onchange="handleImage(event, 'viewImg3')" class="text-[10px] w-full border bg-white p-1 rounded">
+                        <input type="file" accept="image/*" onchange="handleImage(event, 'viewImg4')" class="text-[10px] w-full border bg-white p-1 rounded">
+                    </div>
+                </div>
+
+                <!-- البيانات -->
+                <div class="lg:col-span-2 space-y-4 p-4 bg-gray-50 rounded-xl border border-gray-200">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <input type="text" placeholder="عنوان التقرير الأساسي" oninput="updateReportField('view_prog_main', this.value)" class="border p-2 rounded-lg text-sm font-bold w-full" value="تنفيذ برنامج توجيهي">
+                        <input type="text" placeholder="اسم البرنامج المنفذ" oninput="updateReportField('view_prog_card', this.value)" class="border p-2 rounded-lg text-sm font-bold w-full">
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <input type="text" placeholder="الجهة المنفذة" oninput="updateReportField('view_org', this.value)" class="border p-2 rounded-lg text-sm font-bold w-full" value="التوجيه الطلابي">
+                        <input type="date" id="reportDateInput" onchange="handleReportDate(this.value)" class="border p-2 rounded-lg text-sm font-bold w-full">
+                    </div>
+                    <div class="space-y-2">
+                        <input type="text" placeholder="الموجهون الطلابيون" oninput="updateReportField('view_counselors_report', this.value)" class="border p-2 rounded-lg text-xs font-bold w-full" value="عيسى الصبحي - عبدالإله الغامدي - عصام الزهراني">
+                        <input type="text" placeholder="مدير المدرسة" oninput="updateReportField('view_manager_report', this.value)" class="border p-2 rounded-lg text-xs font-bold w-full" value="أحمد عبدالقادر الزهراني">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="text" class="goal-input border p-2 rounded text-[11px]" oninput="updateGoals()" placeholder="الهدف 1">
+                        <input type="text" class="goal-input border p-2 rounded text-[11px]" oninput="updateGoals()" placeholder="الهدف 2">
+                        <input type="text" class="goal-input border p-2 rounded text-[11px]" oninput="updateGoals()" placeholder="الهدف 3">
+                        <input type="text" class="goal-input border p-2 rounded text-[11px]" oninput="updateGoals()" placeholder="الهدف 4">
+                    </div>
+                </div>
+
+                <!-- المستفيدون -->
+                <div class="lg:col-span-1 p-4 bg-gray-50 rounded-xl border border-gray-200">
+                    <p class="font-bold border-b mb-3 text-sm text-gray-600">المستفيدون:</p>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center"><label class="text-xs font-bold">طلاب</label><input type="text" oninput="updateReportField('viewS', this.value)" class="w-16 border p-1 rounded text-center text-sm"></div>
+                        <div class="flex justify-between items-center"><label class="text-xs font-bold">معلمون</label><input type="text" oninput="updateReportField('viewT', this.value)" class="w-16 border p-1 rounded text-center text-sm"></div>
+                        <div class="flex justify-between items-center"><label class="text-xs font-bold">إداريون</label><input type="text" oninput="updateReportField('viewA', this.value)" class="w-16 border p-1 rounded text-center text-sm"></div>
+                        <div class="flex justify-between items-center"><label class="text-xs font-bold">ضيوف</label><input type="text" oninput="updateReportField('viewG', this.value)" class="w-16 border p-1 rounded text-center text-sm"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- معاينة التقرير -->
+        <div class="report-wrapper pb-20">
+            <div class="report-print-area" id="printableReport">
+                <header class="mb-4">
+                    <div class="flex items-center justify-center gap-5 border-b-2 border-[#007A7C] pb-3">
+                        <img src="https://upload.wikimedia.org/wikipedia/ar/1/17/Saudi_Ministry_of_Education_Logo_2025.png" alt="Logo" class="w-16">
+                        <div class="vertical-line"></div>
+                        <div class="text-right">
+                            <h2 class="text-[#007A7C] font-bold text-[17px]">الإدارة العامة للتعليم بمحافظة جدة</h2>
+                            <p class="text-[#007A7C] font-bold text-[17px]">مدرسة الأقصى المبارك المتوسطة</p>
+                        </div>
+                    </div>
+                </header>
+
+                <main class="flex flex-col gap-4">
+                    <div class="text-center">
+                        <h2 class="text-xl font-black text-[#007A7C]">تقرير <span id="view_prog_main">تنفيذ برنامج توجيهي</span></h2>
+                    </div>
+
+                    <section class="grid grid-cols-4 gap-3">
+                        <div class="custom-box text-center col-span-1"><p class="text-[10px] text-gray-500">اسم البرنامج</p><p id="view_prog_card" class="font-bold text-[#007A7C] text-[16px] min-h-[1.2em]">-</p></div>
+                        <div class="custom-box text-center"><p class="text-[10px] text-gray-500">اليوم</p><p id="view_day" class="font-bold text-[16px]">-</p></div>
+                        <div class="custom-box text-center"><p class="text-[10px] text-gray-500">تاريخ التنفيذ</p><p id="view_date" class="font-bold text-[16px] arabic-numbers">-</p></div>
+                        <div class="custom-box text-center"><p class="text-[10px] text-gray-500">مقر التنفيذ</p><p class="font-bold text-[16px]">الفصول / الإذاعة</p></div>
+                    </section>
+
+                    <section>
+                        <div class="custom-box border-2 p-0 overflow-hidden"> 
+                            <div class="bg-[#007A7C] text-white text-center py-1 text-[12px] font-bold">المستفيدون من البرنامج</div>
+                            <div class="grid grid-cols-5 text-center items-center p-1">
+                                <div class="col-span-1 bg-white/40 py-2 rounded"><p class="text-[11px] text-[#007A7C] font-bold">الجهة المنفذة</p><p id="view_org" class="text-[14px] font-black text-[#007A7C]">التوجيه الطلابي</p></div>
+                                <div class="col-span-1 border-r border-[#007A7C]/20"><p class="text-[12px] text-[#007A7C] font-bold">طلاب</p><p id="viewS" class="highlight-black">-</p></div>
+                                <div class="col-span-1 border-r border-[#007A7C]/20"><p class="text-[12px] text-[#007A7C] font-bold">معلمون</p><p id="viewT" class="highlight-black">-</p></div>
+                                <div class="col-span-1 border-r border-[#007A7C]/20"><p class="text-[12px] text-[#007A7C] font-bold">إداريون</p><p id="viewA" class="highlight-black">-</p></div>
+                                <div class="col-span-1 border-r border-[#007A7C]/20"><p class="text-[12px] text-[#007A7C] font-bold">ضيوف</p><p id="viewG" class="highlight-black">-</p></div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section>
+                        <h3 class="section-title">الأهداف</h3>
+                        <div id="view_goals_container" class="grid grid-cols-2 gap-2">
+                            <div class="custom-box text-sm text-gray-400 italic">بانتظار إدخال الأهداف...</div>
+                        </div>
+                    </section>
+
+                    <section>
+                        <h3 class="section-title">شواهد من تنفيذ البرنامج</h3>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="photo-placeholder" id="viewImg1"><span>صورة (١)</span></div>
+                            <div class="photo-placeholder" id="viewImg2"><span>صورة (٢)</span></div>
+                            <div class="photo-placeholder" id="viewImg3"><span>صورة (٣)</span></div>
+                            <div class="photo-placeholder" id="viewImg4"><span>صورة (٤)</span></div>
+                        </div>
+                    </section>
+
+                    <section class="grid grid-cols-2 gap-8 pt-6 mt-auto">
+                        <div class="text-center">
+                            <p class="font-bold text-[#007A7C] underline underline-offset-4">الموجه الطلابي</p>
+                            <p id="view_counselors_report" class="font-black text-[16px] mt-2">عيسى الصبحي - عبدالإله الغامدي - عصام الزهراني</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="font-bold text-[#007A7C] underline underline-offset-4">مدير المدرسة</p>
+                            <p id="view_manager_report" class="font-black text-[16px] mt-2">أحمد عبدالقادر الزهراني</p>
+                        </div>
+                    </section>
+                </main>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const noorLogoUrl = "https://noor.moe.gov.sa/Noor/images/home_login/logo_new.png";
+        
+        function showSection(section) {
+            document.getElementById('mainMenu').classList.add('hidden');
+            document.getElementById('healthCardsSection').classList.add('hidden');
+            document.getElementById('activityReportsSection').classList.add('hidden');
+            
+            if(section === 'main') {
+                document.getElementById('mainMenu').classList.remove('hidden');
+            } else if(section === 'healthCards') {
+                document.getElementById('healthCardsSection').classList.remove('hidden');
+                initHealthCards();
+            } else if(section === 'activityReports') {
+                document.getElementById('activityReportsSection').classList.remove('hidden');
+            }
+        }
+
+        // --- وظائف البطاقات الصحية ---
+        function initHealthCards() {
+            const wrapper = document.getElementById('cardsWrapper');
+            if (wrapper.innerHTML === "") {
+                let html = '';
+                for (let i = 1; i <= 4; i++) {
+                    html += `
+                        <div id="card_wrapper_${i}" class="card-wrapper flex flex-col gap-2 no-break">
+                            <div class="bg-white p-3 border rounded-xl no-print shadow-sm space-y-2">
+                                <div class="flex gap-2">
+                                    <input type="text" id="name_${i}" oninput="syncCard(${i})" class="flex-1 border p-1 rounded text-[11px]" placeholder="اسم الطالب">
+                                    <input type="text" id="status_${i}" oninput="syncCard(${i})" class="flex-1 border p-1 rounded text-[11px]" placeholder="الحالة">
+                                </div>
+                                <textarea id="recom_${i}" oninput="syncCard(${i})" class="w-full border p-1 rounded text-[11px] h-12" placeholder="التوصيات (تظهر في المنتصف)"></textarea>
+                            </div>
+                            <div class="health-card">
+                                <div class="flex justify-between items-start border-b-2 border-[#007a83] pb-2 mb-2">
+                                    <img src="${noorLogoUrl}" class="h-10">
+                                    <div class="text-center">
+                                        <div class="text-[9px] font-bold text-gray-700">الإدارة العامة للتعليم بمحافظة جدة</div>
+                                        <div class="text-[11px] font-black text-[#007a83]">مدرسة الأقصى المبارك المتوسطة</div>
+                                    </div>
+                                    <div class="border-2 border-[#007a83] px-2 py-0.5 rounded-md font-black text-[10px] text-[#007a83]">بطاقة صحية</div>
+                                </div>
+                                <div class="space-y-3">
+                                    <div class="flex items-center gap-2"><span class="font-bold text-[#007a83] text-[13px] w-12">الاسم:</span><div id="disp_name_${i}" class="data-value"></div></div>
+                                    <div class="flex items-center gap-2"><span class="font-bold text-[#007a83] text-[13px] w-12">الحالة:</span><div id="disp_status_${i}" class="data-value text-red-700 font-black"></div></div>
+                                </div>
+                                <div class="recommendation-container">
+                                    <span class="font-bold text-[#007a83] text-[12px] mb-2 block text-center">التوصيات والتعليمات للمعلم</span>
+                                    <div id="disp_recom_${i}" class="recommendation-area"></div>
+                                </div>
+                                <div class="text-center px-1"><p class="text-[10px] font-black text-red-700 border-2 border-red-200 rounded-lg py-1 bg-red-50">نأمل من الجميع تسهيل مهمة حامل البطاقة</p></div>
+                                <div class="mt-3 border-t-2 border-dotted pt-2 flex justify-between px-2 text-[10px] font-bold">
+                                    <div class="flex flex-col"><span class="text-[#007a83]">الموجه الطلابي</span><span>عصام الزهراني</span></div>
+                                    <div class="flex flex-col text-left"><span class="text-[#007a83]">مدير المدرسة</span><span>أحمد الزهراني</span></div>
+                                </div>
+                            </div>
+                        </div>`;
+                }
+                wrapper.innerHTML = html;
+                updateCardVisibility();
+            }
+        }
+
+        function syncCard(id) {
+            document.getElementById(`disp_name_${id}`).innerText = document.getElementById(`name_${id}`).value;
+            document.getElementById(`disp_status_${id}`).innerText = document.getElementById(`status_${id}`).value;
+            document.getElementById(`disp_recom_${id}`).innerText = document.getElementById(`recom_${id}`).value;
+        }
+
+        function updateCardVisibility() {
+            const count = parseInt(document.getElementById('cardCountSelector').value);
+            for (let i = 1; i <= 4; i++) {
+                const el = document.getElementById(`card_wrapper_${i}`);
+                if (el) i <= count ? el.classList.remove('hidden') : el.classList.add('hidden');
+            }
+        }
+
+        // --- وظائف نظام التقارير المطور ---
+        function toArabicDigits(str) {
+            if (!str) return "";
+            const id = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
+            return str.toString().replace(/[0-9]/g, w => id[+w]);
+        }
+
+        function updateReportField(id, val) {
+            const el = document.getElementById(id);
+            if (el) el.innerText = toArabicDigits(val);
+        }
+
+        function handleReportDate(dateVal) {
+            if (!dateVal) return;
+            const dateObj = new Date(dateVal);
+            const days = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+            document.getElementById('view_day').innerText = days[dateObj.getDay()];
+            
+            const options = { year: 'numeric', month: 'numeric', day: 'numeric', calendar: 'islamic-umalqura' };
+            let hijriDate = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura', options).format(dateObj);
+            document.getElementById('view_date').innerText = toArabicDigits(hijriDate.replace(/هـ/g, '').trim()) + " هـ";
+        }
+
+        function updateGoals() {
+            const goalInputs = document.querySelectorAll('.goal-input');
+            const container = document.getElementById('view_goals_container');
+            container.innerHTML = '';
+            let count = 0;
+            goalInputs.forEach(input => {
+                if (input.value.trim() !== "") {
+                    count++;
+                    const div = document.createElement('div');
+                    div.className = "custom-box flex gap-2 items-center";
+                    div.innerHTML = `<span class="text-[#007A7C] font-bold">${toArabicDigits(count)}.</span><p class="font-bold text-[14px]">${toArabicDigits(input.value)}</p>`;
+                    container.appendChild(div);
+                }
+            });
+        }
+
+        function handleImage(event, viewId) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = e => {
+                const el = document.getElementById(viewId);
+                el.style.backgroundImage = `url('${e.target.result}')`;
+                el.innerHTML = '';
+                el.style.border = '2px solid var(--moe-green)';
+            };
+            reader.readAsDataURL(file);
+        }
+
+        window.onload = () => {
+            // تهيئة تاريخ التقرير لليوم
+            const today = new Date().toISOString().split('T')[0];
+            const dateInput = document.getElementById('reportDateInput');
+            if(dateInput) {
+                dateInput.value = today;
+                handleReportDate(today);
+            }
+        };
+    </script>
+</body>
+</html>
