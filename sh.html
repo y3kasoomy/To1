@@ -1,0 +1,256 @@
+import React, { useState } from 'react';
+import { Printer, Settings, Type, Palette, AlignLeft } from 'lucide-react';
+
+const App = () => {
+  // بيانات النصوص وتنسيقاتها
+  const [formData, setFormData] = useState({
+    entity: 'تتقدم إدارة المدرسة بوافر الشكر والتقدير لـ',
+    recipient: 'عبدالرحمن بن محمد العتيبي',
+    line1: 'نظير تفوقه الدراسي وانضباطه المثالي',
+    line2: 'ومشاركته الفعالة في الأنشطة المدرسية',
+    closing: 'سائلين الله له دوام التوفيق والسداد',
+    managerTitle: 'مدير المدرسة',
+    managerName: 'خالد بن عبدالله السبيعي',
+    viceTitle: 'وكيل المدرسة',
+    viceName: 'فهد بن محمد'
+  });
+
+  // حالة نوع الخط المختار للشهادة بالكامل
+  const [selectedFont, setSelectedFont] = useState("'Tajawal', sans-serif");
+
+  // إعدادات التنسيق لكل عنصر
+  const [styles, setStyles] = useState({
+    entity: { size: 22, color: '#000000' },
+    recipient: { size: 44, color: '#000000' },
+    lines: { size: 24, color: '#000000' },
+    closing: { size: 20, color: '#000000' },
+    signatures: { titleSize: 14, nameSize: 22, color: '#000000' }
+  });
+
+  const fonts = [
+    { name: 'خط تجول (رسمي)', value: "'Tajawal', sans-serif" },
+    { name: 'خط كايرو (عصري)', value: "'Cairo', sans-serif" },
+    { name: 'خط الأميري (كلاسيكي)', value: "'Amiri', serif" },
+    { name: 'خط المراعي (ناعم)', value: "'Almarai', sans-serif" },
+    { name: 'خط الكوفي (فني)', value: "'Noto Kufi Arabic', sans-serif" }
+  ];
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleStyleChange = (key, field, value) => {
+    setStyles(prev => ({
+      ...prev,
+      [key]: { ...prev[key], [field]: value }
+    }));
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100 flex flex-col md:flex-row font-sans" dir="rtl">
+      {/* لوحة التحكم الجانبية */}
+      <div className="w-full md:w-96 bg-white shadow-xl p-6 overflow-y-auto max-h-screen print:hidden z-30 border-l border-gray-200">
+        <div className="flex items-center gap-2 mb-6 text-[#00A9A1] border-b pb-4">
+          <Settings size={20} />
+          <h2 className="text-lg font-bold">تنسيق الخطوط والألوان</h2>
+        </div>
+
+        <div className="space-y-6">
+          {/* اختيار نوع الخط العام */}
+          <section className="p-3 bg-[#00A9A1]/5 rounded-lg border border-[#00A9A1]/20">
+            <label className="block text-xs font-bold text-[#00A9A1] mb-2 flex items-center gap-2">
+              <AlignLeft size={14} /> اختيار نوع خط الشهادة
+            </label>
+            <select 
+              value={selectedFont} 
+              onChange={(e) => setSelectedFont(e.target.value)}
+              className="w-full p-2 border rounded text-sm bg-white outline-none focus:ring-2 focus:ring-[#00A9A1]"
+            >
+              {fonts.map((f, i) => (
+                <option key={i} value={f.value}>{f.name}</option>
+              ))}
+            </select>
+          </section>
+
+          {/* تحكم الافتتاحية */}
+          <section className="p-3 bg-gray-50 rounded-lg border">
+            <label className="block text-xs font-bold text-gray-600 mb-2">الافتتاحية</label>
+            <input type="text" name="entity" value={formData.entity} onChange={handleInputChange} className="w-full p-2 mb-2 border rounded text-sm" />
+            <div className="flex gap-2 items-center">
+              <Type size={14} />
+              <input type="range" min="10" max="50" value={styles.entity.size} onChange={(e) => handleStyleChange('entity', 'size', e.target.value)} className="w-full accent-[#00A9A1]" />
+              <input type="color" value={styles.entity.color} onChange={(e) => handleStyleChange('entity', 'color', e.target.value)} className="w-8 h-8 rounded cursor-pointer border-none" />
+            </div>
+          </section>
+
+          {/* تحكم اسم المكرم */}
+          <section className="p-3 bg-gray-50 rounded-lg border">
+            <label className="block text-xs font-bold text-gray-600 mb-2">اسم المكرم</label>
+            <input type="text" name="recipient" value={formData.recipient} onChange={handleInputChange} className="w-full p-2 mb-2 border rounded text-sm font-bold" />
+            <div className="flex gap-2 items-center">
+              <Type size={14} />
+              <input type="range" min="20" max="80" value={styles.recipient.size} onChange={(e) => handleStyleChange('recipient', 'size', e.target.value)} className="w-full accent-[#00A9A1]" />
+              <input type="color" value={styles.recipient.color} onChange={(e) => handleStyleChange('recipient', 'color', e.target.value)} className="w-8 h-8 rounded cursor-pointer border-none" />
+            </div>
+          </section>
+
+          {/* تحكم نصوص التقدير */}
+          <section className="p-3 bg-gray-50 rounded-lg border">
+            <label className="block text-xs font-bold text-gray-600 mb-2">نصوص التقدير</label>
+            <input type="text" name="line1" value={formData.line1} onChange={handleInputChange} className="w-full p-2 mb-1 border rounded text-xs" />
+            <input type="text" name="line2" value={formData.line2} onChange={handleInputChange} className="w-full p-2 mb-2 border rounded text-xs" />
+            <div className="flex gap-2 items-center">
+              <Type size={14} />
+              <input type="range" min="10" max="50" value={styles.lines.size} onChange={(e) => handleStyleChange('lines', 'size', e.target.value)} className="w-full accent-[#00A9A1]" />
+              <input type="color" value={styles.lines.color} onChange={(e) => handleStyleChange('lines', 'color', e.target.value)} className="w-8 h-8 rounded cursor-pointer border-none" />
+            </div>
+          </section>
+
+          {/* تحكم التوقيعات */}
+          <section className="p-3 bg-gray-50 rounded-lg border">
+            <label className="block text-xs font-bold text-gray-600 mb-2">أسماء الموقعين (الوكيل والمدير)</label>
+            <div className="grid grid-cols-2 gap-2 mb-2">
+                <input type="text" name="viceName" value={formData.viceName} onChange={handleInputChange} className="p-2 border rounded text-xs" placeholder="اسم الوكيل" />
+                <input type="text" name="managerName" value={formData.managerName} onChange={handleInputChange} className="p-2 border rounded text-xs" placeholder="اسم المدير" />
+            </div>
+            <div className="flex gap-2 items-center">
+              <Type size={14} title="حجم الأسماء" />
+              <input type="range" min="10" max="40" value={styles.signatures.nameSize} onChange={(e) => handleStyleChange('signatures', 'nameSize', e.target.value)} className="w-full accent-[#00A9A1]" />
+              <input type="color" value={styles.signatures.color} onChange={(e) => handleStyleChange('signatures', 'color', e.target.value)} className="w-8 h-8 rounded cursor-pointer border-none" />
+            </div>
+          </section>
+        </div>
+
+        <button onClick={handlePrint} className="w-full mt-8 bg-black hover:bg-gray-800 text-white py-4 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg font-bold">
+          <Printer size={20} />
+          <span>طباعة الشهادة</span>
+        </button>
+      </div>
+
+      {/* منطقة المعاينة */}
+      <div className="flex-1 p-4 flex justify-center items-center overflow-auto bg-gray-300">
+        <div 
+          className="relative bg-white shadow-2xl overflow-hidden print:shadow-none print:m-0"
+          style={{ 
+            width: '297mm', 
+            height: '210mm',
+            minWidth: '297mm',
+            minHeight: '210mm',
+            transform: 'scale(0.55)',
+            transformOrigin: 'center center',
+            fontFamily: selectedFont // تطبيق الخط المختار هنا
+          }}
+          id="certificate-content"
+        >
+          {/* العلامة المائية */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-[15]">
+             <img 
+               src="https://upload.wikimedia.org/wikipedia/ar/1/17/Saudi_Ministry_of_Education_Logo_2025.png" 
+               className="w-[75%] opacity-[0.06] grayscale scale-110" 
+               alt="watermark" 
+             />
+          </div>
+
+          {/* الترويسة والمخطوطة */}
+          <div className="relative z-20 flex justify-between items-center px-20 pt-12">
+            <img 
+              src="https://upload.wikimedia.org/wikipedia/ar/1/17/Saudi_Ministry_of_Education_Logo_2025.png" 
+              alt="وزارة التعليم" 
+              className="h-24 w-auto object-contain"
+            />
+            <div className="flex flex-col items-center">
+                <img 
+                  src="https://y3kasoomy.github.io/To1/shok.png" 
+                  alt="شكر وتقدير" 
+                  className="w-[240px] h-auto drop-shadow-sm"
+                />
+            </div>
+            <div className="w-24"></div> 
+          </div>
+
+          {/* الإطار الداخلي */}
+          <div className="absolute top-[175px] left-[70px] right-[70px] bottom-[70px] bg-white/50 border-2 border-black/5 rounded-[45px] z-10 pointer-events-none"></div>
+
+          {/* محتوى النصوص */}
+          <div className="relative z-20 text-center mt-16 px-32">
+            <p 
+              style={{ fontSize: `${styles.entity.size}pt`, color: styles.entity.color }}
+              className="mb-4 font-bold tracking-tight leading-relaxed"
+            >
+              {formData.entity}
+            </p>
+            
+            <div className="mb-6">
+                <h1 
+                  style={{ fontSize: `${styles.recipient.size}pt`, color: styles.recipient.color }}
+                  className="font-black tracking-tighter py-2 leading-tight"
+                >
+                {formData.recipient}
+                </h1>
+            </div>
+            
+            <div 
+              style={{ fontSize: `${styles.lines.size}pt`, color: styles.lines.color }}
+              className="space-y-3 font-bold leading-normal"
+            >
+              <p>{formData.line1}</p>
+              <p>{formData.line2}</p>
+            </div>
+            
+            <div 
+              style={{ fontSize: `${styles.closing.size}pt`, color: styles.closing.color }}
+              className="mt-12 font-black tracking-wide"
+            >
+              {formData.closing}
+            </div>
+          </div>
+
+          {/* التواقيع (تستخدم نفس الخط المختار) */}
+          <div className="absolute bottom-28 left-0 right-0 z-20 px-44 flex justify-between items-end">
+            <div className="text-center w-72">
+              <p className="text-gray-400 font-bold uppercase tracking-widest mb-2 border-b border-gray-100 pb-2" style={{ fontSize: `${styles.signatures.titleSize}pt` }}>{formData.viceTitle}</p>
+              <p style={{ fontSize: `${styles.signatures.nameSize}pt`, color: styles.signatures.color }} className="font-black">{formData.viceName}</p>
+            </div>
+            <div className="text-center w-72">
+              <p className="text-gray-400 font-bold uppercase tracking-widest mb-2 border-b border-gray-100 pb-2" style={{ fontSize: `${styles.signatures.titleSize}pt` }}>{formData.managerTitle}</p>
+              <p style={{ fontSize: `${styles.signatures.nameSize}pt`, color: styles.signatures.color }} className="font-black">{formData.managerName}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <style dangerouslySetInnerHTML={{ __html: `
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Cairo:wght@400;700;900&family=Amiri:ital,wght@0,400;0,700;1,400&family=Almarai:wght@400;700;800&family=Noto+Kufi+Arabic:wght@400;700;900&display=swap');
+        
+        body { 
+          font-family: 'Tajawal', sans-serif; 
+          -webkit-print-color-adjust: exact;
+        }
+
+        #certificate-content p, #certificate-content h1, #certificate-content div {
+            font-style: normal !important; 
+        }
+
+        @media print {
+          @page { size: A4 landscape; margin: 0; }
+          body { background: white !important; }
+          .print\\:hidden { display: none !important; }
+          #certificate-content {
+            transform: none !important;
+            box-shadow: none !important;
+            margin: 0 !important;
+            width: 297mm !important;
+            height: 210mm !important;
+          }
+        }
+      `}} />
+    </div>
+  );
+};
+
+export default App;
